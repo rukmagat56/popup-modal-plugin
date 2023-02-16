@@ -1,0 +1,74 @@
+ add_action('init','modal');
+
+  ?>
+  <div class="modal mt-3" tabindex="-1" name="modal-box">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Modal body text goes here.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<?php
+  
+
+
+function cf_shortcode() {
+     ob_start();
+    html_form_code();
+//     modalbox();
+     return ob_get_clean();
+ }
+add_shortcode( 'sitepoint_contact_form', 'cf_shortcode' );
+
+
+
+///myscript 
+console.log('hello');
+document.write("hello");
+function modal(){
+     const modal=document.querySelector('.modal').innerHTML;
+    document.write(modal);
+// // document.write('dfsdfsdfk');
+ console.log("hcekcgid");
+
+};
+
+setTimeout(modal,2000);
+
+//enqueue scripts 
+$src_js=plugin_dir_url(__FILE__).'/assets/myscript.js';
+$ver_js=filemtime(plugin_dir_url(__FILE__).'/assets/myscript.js');
+wp_enqueue_script('popup_js',$src_js,array(),3.2,false);
+
+
+
+<?php
+function popup_scripts(){
+
+
+wp_enqueue_script('popups',plugins_url( 'myscript.js', __FILE__ ));
+}
+add_action('wp_enque_scripts','popup_scripts');
+
+function show_popup(){
+  ?>
+
+<h1 classs="hello" >hellofdgfh</h1>
+  <?php
+}
+add_action('init','show_popup');
+
+
+ ?>
+  
+  wp_enqueue_script('scripts',plugins_url( 'myscript.js', __FILE__ ));
