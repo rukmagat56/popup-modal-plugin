@@ -10,7 +10,7 @@
     Author uri:https://github.com/rukmagat56
     License: General public license
     License URI: www.general.com
-    text domain:text-popup-plugin
+    text domain:popup
     domain path:/languages
 
 
@@ -18,7 +18,6 @@
 
   //--------------------------------------------commom usage------------------------- 
   //  plugins_url( 'myscript.js', __FILE__ );
-
 
   // add_filter(
   //     'show_admin_bar','__return_false'
@@ -39,26 +38,35 @@
 
   add_theme_support('post-thumbnails');
 
-  function show_popup()
+  function popup_show()
   {
-    global $wp_session;
-    $wp_session['popup'] = false;
-    echo $wp_session['popup'];
-    if ((is_page('sample-page') || is_page('contact')) && ($wp_session['popup'] != true)) {
-      $wp_session['popup'] = true;
-      var_dump($wp_session['popup']);
+    // checking condition for pages
+    if (is_page('sample-page') || is_page('contact')) {
   ?>
      <script>
        function popup_modal() {
-
-         const myModalAlternative = new bootstrap.Modal('.modal');
-         myModalAlternative.show();
+         var popup_modal_show = sessionStorage.getItem('alreadyShow'); //getting value from session storage
+         if (popup_modal_show != 'already shown') //checking for the value
+         {
+           const popup_box_modal = new bootstrap.Modal('.popup_modals');
+           popup_box_modal.show();
+           sessionStorage.setItem('alreadyShow', 'already shown'); //setting key and value for sessionStorage
+         }
        }
+       setTimeout(popup_modal, 3000);
 
-       setTimeout(popup_modal, 2000);
+       function popup_exit_intent() {
+         var popup_modal_show = sessionStorage.getItem('alreadyShow');
+         if (popup_modal_show != 'already shown') {
+           const popup_box_modal = new bootstrap.Modal('.popup_modals'); //calling for modal class
+           popup_box_modal.show(); //using 
+           sessionStorage.setItem('alreadyShow', 'already shown');
+         }
+       }
+       window.addEventListener('mouseout', popup_exit_intent);
      </script>
 
-     <div class="modal " tabindex="-1">
+     <div class="popup_modals modal" id="modal_one" tabindex="-1">
        <div class="modal-dialog">
          <div class="modal-content">
            <div class="modal-header">
@@ -67,59 +75,44 @@
            </div>
            <div class="modal-body">
              <?php
-
-              //  $couNt_posts = wp_count_posts();
               $args = array(
                 'post_type'              => 'post',
-                // 'numberposts'         => '3',
                 'posts_per_page'  => 2,
-                'orderby'            => 'rand',
+                'orderby'            => 'rand', //used to get random post each time
               );
-
               $post = get_posts($args); //reteriving post from database 
               foreach ($post as $posts) {
-
               ?>
-               <div class="card" style="width: 18rem;">
+               <div class="card mt-3">
                  <div class="card-body">
-                  <!-- reteriving post titles -->
-                   <h3 class="card-title"><?php echo $posts->post_title; ?> 
-                  </h3>  
+                   <!-- reteriving post titles -->
+                   <h3 class="card-title"><?php echo $posts->post_title; ?>
+                   </h3>
                    <?php if (get_the_post_thumbnail($posts->ID)) {
-                  //reteriving post feature image
-                    ?>
-
-                     <img src="<?php echo get_the_post_thumbnail($posts->ID) ?>" />
-
-                   <?php
-                    } else {
-                    }
-
-                    ?>
-
-                   <p class="card-text"><?php echo get_the_excerpt($posts->ID);
-                                        ?></p>
-                   <a href="<?php echo get_post_permalink($posts->ID);
-                            ?>" class="btn btn-primary">read more</a>
-
+                      //reteriving post feature image
+                    ?> <?php echo get_the_post_thumbnail($posts->ID); ?>
                  </div>
+               <?php } 
+                ?>
+               <p class="card-text"><?php echo get_the_excerpt($posts->ID);
+                                    ?></p>
+               <a href="<?php echo get_post_permalink($posts->ID);
+                        ?>" class="btn btn-primary">read more</a> <!-- getting permalink for the post -->
+
                </div>
-             <?php
-
+           </div>
+         <?php
               }
-              ?>
-           </div>
-
-           <div class="modal-footer">
-             <button type="button" class="close btn btn-secondary" data-bs-dismiss="modal">Close</button>
-           </div>
+          ?>
+         </div>
+         <div class="modal-footer">
+           <button type="button" class="close btn btn-secondary" data-bs-dismiss="modal">Close</button>
          </div>
        </div>
      </div>
-
-
+     </div>
+     </div>
  <?php
     }
   }
-  add_action('wp_footer', 'show_popup');
-
+  add_action('wp_footer', 'popup_show');
